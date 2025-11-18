@@ -1,80 +1,38 @@
-// const express = require('express');
-// const cors = require('cors');
-// const dotenv = require('dotenv');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
-// // Load environment variables
-// dotenv.config();
-
-// const app = express();
-// const PORT = process.env.PORT || 5000;
-
-// // Middleware
-// app.use(cors());
-// app.use(express.json());
-
-// // Import routes
-// const authRouter = require('./routes/auth');
-// const xtreamRouter = require('./routes/xtream');
-
-// // Main route
-// app.get('/', (req, res) => {
-//   res.json({ 
-//     message: 'IPTV Xtream Codes API Server',
-//     version: '1.0.0',
-//     endpoints: {
-//       auth: {
-//         connect: 'POST /api/auth/connect',
-//         serverInfo: 'GET /api/auth/server-info',
-//         disconnect: 'POST /api/auth/disconnect'
-//       },
-//       xtream: {
-//         liveCategories: 'GET /api/xtream/live-categories',
-//         liveStreams: 'GET /api/xtream/live-streams',
-//         vodCategories: 'GET /api/xtream/vod-categories',
-//         vodStreams: 'GET /api/xtream/vod-streams',
-//         seriesCategories: 'GET /api/xtream/series-categories',
-//         epg: 'GET /api/xtream/epg/:stream_id',
-//         streamUrl: 'GET /api/xtream/stream-url/:stream_id'
-//       }
-//     }
-//   });
-// });
-
-// // Connect routes
-// app.use('/api/auth', authRouter);
-// app.use('/api/xtream', xtreamRouter);
-
-// // 404 error handler
-// app.use((req, res) => {
-//   res.status(404).json({
-//     success: false,
-//     error: 'Route not found'
-//   });
-// });
-
-// // Start server
-// app.listen(PORT, () => {
-//   console.log(`✅ Server is running on http://localhost:${PORT}`);
-//   console.log(`📺 Xtream Codes API Ready`);
-// });
+import authRouter from './routes/auth.routes.js';
+import userRouter from './routes/user.routes.js'; 
+import connectDB from './database/mongodb.js';
+import errorMiddleware from './middleware/error.middleware.js';
 
 
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
 
 dotenv.config();
-
+// import {PORT} from './config/env.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(express.json());
+app.use(cors()); // Enable CORS for all routes
+app.use(express.json()); // reads JSON body from incoming requests
+app.use(cookieParser());// reads cookies from incoming requests
+
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
+app.use(errorMiddleware)
+
 
 app.get('/', (req, res) => {
   res.json({ message: '✅ Server is running locally!' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
+
+  await connectDB();
 });
+
+
+export default app
