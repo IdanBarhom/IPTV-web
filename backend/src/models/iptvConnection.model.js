@@ -91,17 +91,17 @@ const iptvConnectionSchema = new mongoose.Schema(
 
         // 🔹 Backup of the original JSON
         rawUserInfo: {
-        type: Schema.Types.Mixed,
+        type: mongoose.Schema.Types.Mixed,
         },
         rawServerInfo: {
-        type: Schema.Types.Mixed,
+        type: mongoose.Schema.Types.Mixed,
         },
 
-        // 🔹 Last time checked
-        lastCheckedAt: {
-        type: Date,
-        default: Date.now,
-        },
+        // // 🔹 Last time checked
+        // lastCheckedAt: {
+        // type: Date,
+        // default: Date.now,
+        // },
     },
     {
     timestamps: true, 
