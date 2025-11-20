@@ -15,7 +15,7 @@ const buildApiUrl = (url, username, password) => {
 const normalizeBaseUrl=(url) => {
     const trimmed= url.trim().replace(/\/+$/,'');
     if(!trimmed.startsWith('http')){
-        return `http//${trimmed}`;
+        return `http://${trimmed}`;
     }
     return trimmed;
 };
@@ -39,7 +39,8 @@ export const connect = async (req, res,next) => {
         // Test connection to IPTV provider
         let data;   
         try {
-            data= await axios.get(apiUrl, {timeout:5000});
+            const response= await axios.get(apiUrl, {timeout:8000});
+            data=response.data;
         } catch (error) {
             return res.status(401).json({
                 success:false,
@@ -55,10 +56,10 @@ export const connect = async (req, res,next) => {
             session.endSession();
             return res.status(401).json({
                 success:false,
-                error:'Invalid IPTV credentials or inactive account'
+                error:'Invalid IPTV credentials or inactive account' 
             });
         }
-        const expiresAt=userInfo.exp_date ? new Date(userInfo.exp_date *1000) : null;
+        const expiresAt=userInfo.exp_date ? new Date(parseInt(userInfo.exp_date,10 )*1000) : null;
 
 
         const connection = await IptvConnection.create([{

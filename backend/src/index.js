@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
-import {PORT } from '../config/env.js';
+import { PORT } from '../config/env.js';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/user.routes.js'; 
 import connectDB from './database/mongodb.js';
