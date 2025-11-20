@@ -13,7 +13,8 @@ const authorize = async (req, res, next) => {
         }
         const decoded= jwt.verify(token, JWT_SECRET);
 
-        const connection= await IptvConnection.findById(decoded.userId);
+        const connection= await IptvConnection.findById(decoded.connectionId).select('+password')   ;
+        
         if(!connection){
             return res.status(401).json({message: 'Unauthorized - connection not found'});
         }

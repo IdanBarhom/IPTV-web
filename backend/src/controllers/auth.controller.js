@@ -92,7 +92,7 @@ export const connect = async (req, res,next) => {
       ], { session }
     );
 
-    const token = jwt.sign({userId: connection[0]._id}, JWT_SECRET, {expiresIn: JWT_EXPIRE});
+    const token = jwt.sign({connectionId: connection[0]._id}, JWT_SECRET, {expiresIn: JWT_EXPIRE});
 
     await session.commitTransaction();
     session.endSession();

@@ -5,7 +5,8 @@ import cookieParser from 'cookie-parser';
 
 import { PORT } from '../config/env.js';
 import authRouter from './routes/auth.routes.js';
-import userRouter from './routes/user.routes.js'; 
+import connectionRouter from './routes/connection.routes.js'; 
+import xTreamRouter from './routes/xTream.routes.js';
 import connectDB from './database/mongodb.js';
 import errorMiddleware from './middleware/error.middleware.js';
 
@@ -20,7 +21,8 @@ app.use(express.json()); // reads JSON body from incoming requests
 app.use(cookieParser());// reads cookies from incoming requests
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/users', userRouter);
+app.use('/api/v1/connection', connectionRouter);
+app.use('/api/v1/xTream',  xTreamRouter);
 app.use(errorMiddleware)
 
 
