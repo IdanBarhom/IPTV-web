@@ -1,9 +1,8 @@
 
 
 export const buildLiveStreamUrl = (connection, streamId, extension = 'm3u8') => {
-  const { baseUrl, username, password } = connection;
+  const { baseUrl, username, password, allowedOutputFormats } = connection;
 
-  // דוגמה לפורמט הנפוץ ב-Xtream
   return `${baseUrl}/live/${username}/${password}/${streamId}.${extension}`;
 };
 

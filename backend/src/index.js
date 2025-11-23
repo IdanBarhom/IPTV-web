@@ -9,6 +9,7 @@ import connectionRouter from './routes/connection.routes.js';
 import xTreamRouter from './routes/xTream.routes.js';
 import connectDB from './database/mongodb.js';
 import errorMiddleware from './middleware/error.middleware.js';
+import arcjetMiddleware from './middleware/arcjet.middleware.js';
 
 
 
@@ -19,6 +20,8 @@ const app = express();
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // reads JSON body from incoming requests
 app.use(cookieParser());// reads cookies from incoming requests
+app.use(arcjetMiddleware)
+
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/connection', connectionRouter);
