@@ -87,7 +87,7 @@ export const getSeriesByCategories = async (req, res,next) =>
         const { categoryId } = req.params;
        const data = await fetchXtreamData(
       req.connection,
-      'get_series_streams',        // action ל-VOD ב-Xtream
+      'get_series',        // action ל-VOD ב-Xtream
       { category_id: categoryId } // פרמטר נוסף
     );
 
@@ -97,7 +97,7 @@ export const getSeriesByCategories = async (req, res,next) =>
         });
     }
     catch(error){
-        console.error('Error fetching live categories:', error.message);
+        console.error('Error fetching Series By categories:', error.message);
         next(error);
     }
 
@@ -148,9 +148,15 @@ export const getLiveStream = async (req, res,next) =>
 export const getMovieStream = async (req, res,next) => 
 {
   try {
-    const { streamId } = req.params;
+    const {streamId} = req.params;
+    const{ext}= req.query;
+    console.log('Requested container extension:');
 
-    const streamUrl = buildVodStreamUrl(req.connection, streamId);
+    const streamUrl = buildVodStreamUrl(req.connection, streamId,"movie",ext);
+      console.log('Stream ID:', req.params);
+
+      console.log('Fetching XTREAM data from URL:', streamUrl);
+
 
     res.status(200).json({
       success: true,
@@ -166,8 +172,10 @@ export const getSeriesStream = async (req, res,next) =>
 {
   try {
     const { streamId } = req.params;
+    const{ext}= req.query;
+    console.log(ext)
 
-    const streamUrl = buildVodStreamUrl(req.connection, streamId);
+    const streamUrl = buildVodStreamUrl(req.connection, streamId,"series",ext);
 
     res.status(200).json({
       success: true,
@@ -179,5 +187,40 @@ export const getSeriesStream = async (req, res,next) =>
 
 };
 
+export const getMovieInfo = async (req, res,next) => 
+{
+  try {
+    const { streamId } = req.params;
+    const data = await fetchXtreamData(
+      req.connection,
+      'get_vod_info',        // action ל-VOD ב-Xtream
+      { vod_id: streamId } // פרמטר נוסף
+    );
+    res.status(200).json({
+      success: true,
+      data: data,
+    });
+  } catch (err) {
+    next(err);
+  }   
+};
 
+export const getSeriesInfo = async (req, res,next) => 
+{
+  try {
+    const { streamId } = req.params;    
+    const data = await fetchXtreamData(
+      req.connection,
+      'get_series_info',        // action ל-VOD ב-Xtream
+      { series_id: streamId } // פרמטר נוסף
+    );
+    res.status(200).json({
+      success: true,
+      data: data,
+    });
+  }
+    catch (err) {
+    next(err);
+  }   
+};
 

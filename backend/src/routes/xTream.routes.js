@@ -4,7 +4,7 @@ import authorize from "../middleware/auth.middleware.js";
 import { 
     getMoviesCategories, getSeriesCategories, getLiveCategories,
     getMoviesByCategories, getSeriesByCategories, getLiveByCategories, 
-    getLiveStream, getMovieStream, getSeriesStream} 
+    getLiveStream, getMovieStream, getSeriesStream , getMovieInfo, getSeriesInfo} 
     from "../controllers/xTream.controller.js";
 
 //all categories routes
@@ -26,9 +26,16 @@ xTreamRouter.get('/live/categories/:categoryId',authorize, getLiveByCategories);
 //fetching video stream by category route
 xTreamRouter.get('/live/video/:streamId', authorize, getLiveStream);
 
-xTreamRouter.get('/movies/video/:streamId', authorize, getMovieStream);
+xTreamRouter.get('/movie/video/:streamId', authorize, getMovieStream);
 
 xTreamRouter.get('/series/video/:streamId', authorize, getSeriesStream);
+
+
+    
+// fetching video info by streamId
+xTreamRouter.get('/movie/info/:streamId', authorize, getMovieInfo);
+
+xTreamRouter.get('/series/info/:streamId', authorize, getSeriesInfo);
 
 
 export default xTreamRouter;
