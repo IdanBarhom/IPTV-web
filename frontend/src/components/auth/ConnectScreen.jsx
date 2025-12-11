@@ -4,11 +4,11 @@ import { connectToServer, setAuthToken } from "../../api/client";
 
 export default function ConnectScreen({ onConnected }) {
 
-  
+
   const [name, setName] = useState("iptv");
   const [url, setBaseUrl] = useState("http://a10.lion.wine:80");
-  const [username, setUsername] = useState("5HUx1760");
-  const [password, setPassword] = useState("Rmuc6997");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
