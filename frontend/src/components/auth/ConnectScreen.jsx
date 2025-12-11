@@ -3,10 +3,12 @@ import { useState } from "react";
 import { connectToServer, setAuthToken } from "../../api/client";
 
 export default function ConnectScreen({ onConnected }) {
-    const [name, setName] = useState("גכג");
+
+  
+  const [name, setName] = useState("iptv");
   const [url, setBaseUrl] = useState("http://a10.lion.wine:80");
   const [username, setUsername] = useState("5HUx1760");
-  const [password, setPassword] = useState("yneX4743");
+  const [password, setPassword] = useState("Rmuc6997");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,6 +21,7 @@ export default function ConnectScreen({ onConnected }) {
     try {
       const payload = { name,url, username, password };
       const res = await connectToServer(payload);
+      console.log(payload);
 
       // נניח שהבקאנד מחזיר token בשדה res.data.token
       const token = res.data.token;
@@ -35,7 +38,7 @@ export default function ConnectScreen({ onConnected }) {
       onConnected(); // אומר ל-App שאנחנו מחוברים
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || err.message || "Connection failed");
+      setError(err.response?.data?.error|| err.response?.data?.message || "Connection failed");
     } finally {
       setLoading(false);
     }

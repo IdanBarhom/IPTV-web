@@ -1,4 +1,5 @@
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
@@ -9,6 +10,18 @@ const api = axios.create({
 // ─────────────────────────────
 //  Auth token helpers
 // ─────────────────────────────
+export const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000;  
+    return decoded.exp < currentTime;
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    return true;
+  }
+};
+
 export const setAuthToken = (token) => {
   if (token) {
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -21,7 +34,7 @@ export const setAuthToken = (token) => {
 
 // לטעינה ראשונית אם יש טוקן שמור
 const savedToken = localStorage.getItem("xtream_token");
-if (savedToken) {
+if (savedToken && !isTokenExpired(savedToken)) {
   api.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
 }
 
@@ -53,6 +66,30 @@ export const getMoviesByCategory = (categoryId) =>
 export const getVodStream = (streamId, ext) =>
   api.get(`/xTream/movies/stream/${streamId}`, {
     params: ext ? { ext } : {},
+  });
+
+export const getMovieInfo=(movieId)=>
+  api.get(`/xTream/movie/info/${movieId}`);
+
+export const getMovieStream = (streamId,ext) =>
+ api.get(`/xTream/movie/video/${streamId}`,{
+    params: {ext},
+  });
+
+// SERIES
+export const getSeriesCategories=()=>
+  api.get("/xTream/series/categories");
+
+export const getSeriesByCategories=(categoryId)=>
+  api.get(`/xTream/series/categories/${categoryId}`);
+
+
+export const getSeriesInfo=(seriesId)=>
+  api.get(`/xTream/series/info/${seriesId}`);
+
+export const getSeriesStream = (streamId,ext) =>
+  api.get(`/xTream/series/video/${streamId}`,{
+    params: {ext},
   });
 
 export default api;

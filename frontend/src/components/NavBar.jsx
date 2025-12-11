@@ -1,7 +1,7 @@
 import TabButton from "./TabButton.jsx"
 
 
-export default function NavBar({activeTab,setActiveTab}){
+export default function NavBar({activeTab,setActiveTab, }){
 
 return(
    <div className=" w-full flex justify-center mt-4">

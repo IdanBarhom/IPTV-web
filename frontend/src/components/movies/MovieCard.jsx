@@ -1,10 +1,22 @@
 // src/components/live/LiveChannelCard.jsx
-export default function MovieCard({ channel }) {
+export default function MovieCard({ movie, onClick }) {
   return (
-    <div className="bg-slate-800 p-3 rounded-xl hover:bg-slate-700 transition shadow-md cursor-pointer flex flex-col gap-1">
-      <div className="text-xs text-slate-400">#{channel.num}</div>
-      <div className="font-semibold truncate">{channel.name}</div>
-      <div className="text-xs text-slate-400">Stream ID: {channel.stream_id}</div>
+     <div className="cursor-pointer flex flex-col items-start gap-2 transform duration-200 hover:scale-105" 
+    onClick={onClick}
+    >
+      {/* IMAGE ONLY */}
+      <div className="w-[200px] h-[300px] overflow-hidden rounded-xl">
+        <img
+          src={movie.stream_icon}
+          alt={movie.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* TEXT UNDER THE IMAGE */}
+      <div className="px-1">
+        <h2 className="font-semibold text-sm">{movie.name}</h2>
+      </div>
     </div>
   );
 }

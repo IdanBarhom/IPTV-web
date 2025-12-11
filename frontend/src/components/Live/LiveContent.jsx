@@ -21,6 +21,7 @@ export default function LiveContent() {
   const [currentChannel, setCurrentChannel] = useState(null);
   const [streamUrl, setStreamUrl] = useState("");
   const [loadingStream, setLoadingStream] = useState(false);
+  const [currentCategoryName, setCurrentCategoryName] = useState("");
 
   // --- טעינת קטגוריות ---
   useEffect(() => {
@@ -42,13 +43,15 @@ export default function LiveContent() {
   }, []);
 
   // --- טעינת ערוצים לפי קטגוריה ---
-  const handleCategoryClick = async (categoryId) => {
+  const handleCategoryClick = async (categoryId, categoryName) => {
     try {
       setSelectedCategory(categoryId);
       setLoading(true);
       setError("");
       setCurrentChannel(null);
       setStreamUrl("");
+      setCurrentCategoryName("- " + categoryName)
+
 
       const res = await getLiveByCategory(categoryId); // { success, data: [...] }
       setChannels(res.data.data || []);
@@ -91,7 +94,7 @@ export default function LiveContent() {
   return (
   <div className="space-y-4">
 
-    <h2 className="text-xl font-semibold mb-2">Live TV</h2>
+    <h2 className="text-xl font-semibold mb-2">Live TV {currentCategoryName}</h2>
 
     {error && <p className="text-red-500 text-sm">{error}</p>}
 
@@ -105,7 +108,7 @@ export default function LiveContent() {
 
           {/* כפתור Back – דבוק לראש אזור הגלילה */}
           {selectedCategory && (
-            <div className="sticky top-0 z-10 bg-slate-900/95 pb-2">
+            <div className="sticky top-0 z-10 pb-2">
               <button
                 className="text-sm text-blue-300 hover:text-blue-500"
                 onClick={() => {
@@ -113,10 +116,10 @@ export default function LiveContent() {
                   setChannels([]);
                   setCurrentChannel(null);
                   setStreamUrl("");
+                  setCurrentCategoryName("");
                 }}
               >
-                     <FaArrowLeft  />
-
+                     <FaArrowLeft size={16} />
               </button>
             </div>
           )}
@@ -128,7 +131,7 @@ export default function LiveContent() {
                 <LiveCategoryCard
                   key={cat.category_id}
                   category={cat}
-                  onClick={() => handleCategoryClick(cat.category_id)}
+                  onClick={() => handleCategoryClick(cat.category_id, cat.category_name)}
                 />
               ))}
             </div>
