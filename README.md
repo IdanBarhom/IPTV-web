@@ -1,18 +1,15 @@
 🎬 IPTV Streaming Platform
 A full-stack web application for streaming IPTV content with secure authentication, real-time media delivery, and comprehensive content management.
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/97d22c42-4c41-4006-a237-021ff0fed720" />
+<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/97d22c42-4c41-4006-a237-021ff0fed720" /> 
+<img width="1028" height="837" alt="image" src="https://github.com/user-attachments/assets/d2e6c02d-2c40-4fa7-a1cf-58dc01cbd83a" />
 
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/c95662f7-fc08-449b-930f-4eb4e830cf40" />
+<img width="1029" height="848" alt="image" src="https://github.com/user-attachments/assets/f0ec1e1d-a926-4a53-b765-bdb9be89242a" />
+<img width="1017" height="896" alt="image" src="https://github.com/user-attachments/assets/fda22873-97ed-4644-b8b7-f13baa79515d" />
+<img width="1177" height="859" alt="image" src="https://github.com/user-attachments/assets/d5b9624c-974e-4518-aa49-157ea788d6a3" />
+<img width="1000" height="500" alt="image" src="https://github.com/user-attachments/assets/d9a37f04-8d1e-4491-8aaf-a31b72159898" />
 
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/52f8b120-b11f-4d5f-8e78-acdec1604090" />
 
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/afc8bc0a-9259-4629-8cf5-6b7fa6f2ab32" />
 
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/bea1b8ab-ef00-4a64-97cd-44553009354a" />
-
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/dbf98d3e-27a5-4f61-ad7d-f7feb9d416ca" />
-
-<img width="950" height="470" alt="image" src="https://github.com/user-attachments/assets/6e97a73b-2fbe-4ef8-ada3-af17f48a7258" />
 
 📋 Table of Contents
 
