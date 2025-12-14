@@ -1,9 +1,19 @@
 🎬 IPTV Streaming Platform
 A full-stack web application for streaming IPTV content with secure authentication, real-time media delivery, and comprehensive content management.
-Show Image
-Show Image
-Show Image
-Show Image
+<img width="1903" height="943" alt="image" src="https://github.com/user-attachments/assets/97d22c42-4c41-4006-a237-021ff0fed720" />
+
+<img width="1906" height="944" alt="image" src="https://github.com/user-attachments/assets/c95662f7-fc08-449b-930f-4eb4e830cf40" />
+
+<img width="1902" height="940" alt="image" src="https://github.com/user-attachments/assets/52f8b120-b11f-4d5f-8e78-acdec1604090" />
+
+<img width="1886" height="947" alt="image" src="https://github.com/user-attachments/assets/afc8bc0a-9259-4629-8cf5-6b7fa6f2ab32" />
+
+<img width="1901" height="941" alt="image" src="https://github.com/user-attachments/assets/bea1b8ab-ef00-4a64-97cd-44553009354a" />
+
+<img width="1916" height="1079" alt="image" src="https://github.com/user-attachments/assets/dbf98d3e-27a5-4f61-ad7d-f7feb9d416ca" />
+
+<img width="1899" height="946" alt="image" src="https://github.com/user-attachments/assets/6e97a73b-2fbe-4ef8-ada3-af17f48a7258" />
+
 📋 Table of Contents
 
 ✨ Features
@@ -12,7 +22,7 @@ Core Functionality
 🔐 Secure Authentication - JWT-based authentication system
 📺 Live TV Streaming - Real-time streaming with HLS.js support
 🎬 Movies & Series - VOD content with category browsing
-🎯 Smart Stream Resolution - Automatic format detection and fallback
+🎯 Smart Stream Resolution - Automatic format detection and Sfallback
 📱 Responsive Design - Mobile-first UI with Tailwind CSS
 🔄 Real-time Transcoding - FFmpeg integration for browser compatibility
 
