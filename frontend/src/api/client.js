@@ -83,7 +83,6 @@ export const getSeriesCategories=()=>
 export const getSeriesByCategories=(categoryId)=>
   api.get(`/xTream/series/categories/${categoryId}`);
 
-
 export const getSeriesInfo=(seriesId)=>
   api.get(`/xTream/series/info/${seriesId}`);
 

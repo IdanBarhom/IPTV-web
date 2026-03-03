@@ -1,11 +1,11 @@
-import IptvConnection from "../models/IptvConnection.model.js";
+import IptvConnection from "../models/iptvConnection.model.js";
 
 export const getConnections = async (req, res,next) => 
 {
     try 
     {
         const connections= await IptvConnection.find();
-        res.status(200).json({
+        res.status(200).json({ 
             success:true,
             data:connections
         });

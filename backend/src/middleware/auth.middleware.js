@@ -1,6 +1,6 @@
 import {JWT_SECRET} from '../../config/env.js';
 import jwt from 'jsonwebtoken';
-import IptvConnection from '../models/IptvConnection.model.js';
+import IptvConnection from '../models/iptvConnection.model.js';
 
 const authorize = async (req, res, next) => {
     try{
@@ -19,6 +19,7 @@ const authorize = async (req, res, next) => {
             return res.status(401).json({message: 'Unauthorized - connection not found'});
         }
         req.connection= connection;
+        req.user={connectionId: connection._id};
         next();
     }
     catch(error){
@@ -26,6 +27,7 @@ const authorize = async (req, res, next) => {
             message: 'Unauthorized',error: error.message});
 
     }
+    
 
 }
 

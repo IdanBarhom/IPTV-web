@@ -28,7 +28,6 @@ export default function ConnectScreen({ onConnected }) {
       if (!token) {
         throw new Error("No token returned from server");
       }
-
       // שומר את הטוקן גם ב-axios וגם ב-localStorage
       setAuthToken(token);
 

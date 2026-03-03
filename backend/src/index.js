@@ -20,7 +20,9 @@ const app = express();
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // reads JSON body from incoming requests
 app.use(cookieParser());// reads cookies from incoming requests
-app.use(arcjetMiddleware)
+if(process.env.NODE_ENV === 'production'){
+  app.use(arcjetMiddleware)
+}
 
 
 app.use('/api/v1/auth', authRouter);
@@ -39,5 +41,6 @@ app.listen(PORT, async () => {
   await connectDB();
 });
 
+console.log(process.version);
 
 export default app

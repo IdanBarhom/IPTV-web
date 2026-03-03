@@ -1,5 +1,5 @@
 import axios from 'axios';
-import IptvConnection from '../models/IptvConnection.model.js';
+import IptvConnection from '../models/iptvConnection.model.js';
 import { fetchXtreamData} from '../utils/fetchXtreamData.js';
 import { buildLiveStreamUrl, buildVodStreamUrl } from '../utils/buildStreamUrl.js';
 import {resolveLiveStream} from '../utils/chooseFormat.js';
