@@ -10,6 +10,7 @@ const TABS=[
    {id:"live", label:"Live", Icon:MdLiveTv},
    {id:"movies", label:"Movies", Icon: BiCameraMovie},
    {id:"series", label:"Series", Icon: CgScreen},
+   {id:"settings", label:"Settings", Icon: AiOutlineSetting},
 ]
 
 

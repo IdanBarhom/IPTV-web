@@ -1,8 +1,9 @@
 import { fetchXtreamData } from './fetchXtreamData.js';
+import logger from './logger.js';
 
 export const prefetchAllData = async (connection) => {
-  console.log('🔄 Starting full prefetch...');
-  
+  logger.info({ connectionId: connection.id }, 'Starting full prefetch');
+
   try {
     await Promise.all([
       fetchXtreamData(connection, 'get_vod_categories'),
@@ -10,43 +11,13 @@ export const prefetchAllData = async (connection) => {
       fetchXtreamData(connection, 'get_live_categories'),
       fetchXtreamData(connection, 'get_vod_streams'),
       fetchXtreamData(connection, 'get_series'),
-      fetchXtreamData(connection, 'get_live_streams')
+      fetchXtreamData(connection, 'get_live_streams'),
     ]);
-    
-    console.log('✅ Full prefetch completed!');
+
+    logger.info({ connectionId: connection.id }, 'Full prefetch completed');
     return true;
   } catch (err) {
-    console.error('❌ Prefetch failed:', err.message);
+    logger.error({ err, connectionId: connection.id }, 'Prefetch failed');
     return false;
   }
 };
-
-
-// import { fetchXtreamData } from './fetchXtreamData.js';
-
-// /**
-//  * Prefetch כל הדאטה
-//  */
-// export const prefetchAllData = async (connection) => {
-//   console.log('🔄 Starting prefetch for all categories and streams...');
-  
-//   try {
-//     await Promise.all([
-//       // קטגוריות
-//       fetchXtreamData(connection, 'get_vod_categories'),
-//       fetchXtreamData(connection, 'get_series_categories'),
-//       fetchXtreamData(connection, 'get_live_categories'),
-      
-//       // כל הסטרימים
-//       fetchXtreamData(connection, 'get_vod_streams'),
-//       fetchXtreamData(connection, 'get_series'),
-//       fetchXtreamData(connection, 'get_live_streams')
-//     ]);
-    
-//     console.log('✅ Prefetch completed successfully!');
-//     return true;
-//   } catch (err) {
-//     console.error('❌ Prefetch failed:', err.message);
-//     return false;
-//   }
-// };

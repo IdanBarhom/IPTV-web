@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model IptvConnection {
+  id   String @id @default(cuid())
+
+  // Connection type
+  type   String  @default("xtream") // xtream | m3u
+  m3uUrl String?                    // M3U connections only
+
+  // Credentials (Xtream only, nullable for M3U)
+  baseUrl  String?
+  username String?
+  password String?  // AES-256-GCM encrypted
+  apiUrl   String?
+
+  // user_info from Xtream server
+  status               String    @default("Active") // Active | Expired | Trial | Invalid
+  auth                 Int?
+  message              String?
+  expDateRaw           String?
+  expiresAt            DateTime?
+  isTrial              Boolean   @default(false)
+  activeCons           Int       @default(0)
+  maxConnections       Int       @default(1)
+  allowedOutputFormats String[]
+  createdAtRaw         String?
+
+  // server_info from Xtream server
+  serverUrl          String?
+  serverPort         String?
+  httpsPort          String?
+  serverProtocol     String?
+  rtmpPort           String?
+  timezone           String?
+  serverTimestampNow Int?
+  serverTimeNow      String?
+  process            Boolean?
+
+  // Raw JSON backup
+  rawUserInfo   Json?
+  rawServerInfo Json?
+
+  // Auth
+  refreshToken String? // SHA-256 hash, never plaintext
+
+  // Subscription
+  subscriptionTier      String    @default("free") // free | premium | family
+  subscriptionExpiresAt DateTime?
+
+  // Admin
+  isAdmin Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  favorites    Favorite[]
+  watchHistory WatchHistory[]
+  profiles     Profile[]
+}
+
+model Profile {
+  id           String         @id @default(cuid())
+  connectionId String
+  connection   IptvConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  name      String
+  avatar    String?
+  isDefault Boolean @default(false)
+
+  // Parental controls
+  pin               String?  // bcrypt hashed, null = no PIN required
+  contentRating     String   @default("none") // none | G | PG | PG-13 | R | NC-17
+  blockedCategories String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  favorites    Favorite[]
+  watchHistory WatchHistory[]
+
+  @@unique([connectionId, name])
+}
+
+model Favorite {
+  id           String         @id @default(cuid())
+  connectionId String
+  connection   IptvConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  profileId    String?
+  profile      Profile?       @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  type         String         // live | vod | series
+  streamId     String
+  title        String         @default("")
+  addedAt      DateTime       @default(now())
+
+  @@unique([connectionId, streamId, profileId])
+}
+
+model WatchHistory {
+  id           String         @id @default(cuid())
+  connectionId String
+  connection   IptvConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  profileId    String?
+  profile      Profile?       @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  type         String         // live | vod | series
+  streamId     String
+  title        String         @default("")
+  watchedAt    DateTime       @default(now())
+}

@@ -1,12 +1,17 @@
-import axios from 'axios';
-import IptvConnection from '../models/iptvConnection.model.js';
-import { fetchXtreamData} from '../utils/fetchXtreamData.js';
-import { buildLiveStreamUrl, buildVodStreamUrl } from '../utils/buildStreamUrl.js';
-import {resolveLiveStream} from '../utils/chooseFormat.js';
+import { fetchXtreamData } from '../utils/fetchXtreamData.js';
+import { buildVodStreamUrl } from '../utils/buildStreamUrl.js';
+import { resolveLiveStream } from '../utils/chooseFormat.js';
 
 
 
-export const getMoviesCategories = async (req, res, next) => 
+/**
+ * Returns all VOD (movie) categories for the authenticated connection.
+ * @param {import('express').Request} req - req.connection: IptvConnection
+ * @param {import('express').Response} res - 200: { success, data: category[] }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getMoviesCategories = async (req, res, next) =>
 {
     try{
         const data = await fetchXtreamData(req.connection, 'get_vod_categories');
@@ -17,12 +22,18 @@ export const getMoviesCategories = async (req, res, next) =>
         });
     }
     catch(error){
-        console.error('Error fetching movie categories:', error.message);
         next(error);
     }
 };
 
-export const getSeriesCategories = async (req, res,next ) => 
+/**
+ * Returns all series categories for the authenticated connection.
+ * @param {import('express').Request} req - req.connection: IptvConnection
+ * @param {import('express').Response} res - 200: { success, data: category[] }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getSeriesCategories = async (req, res,next ) =>
 {
    try{
         const data = await fetchXtreamData(req.connection, 'get_series_categories');
@@ -33,14 +44,20 @@ export const getSeriesCategories = async (req, res,next ) =>
         });
     }
     catch(error){
-        console.error('Error fetching series categories:', error.message);
         next(error);
     }
 
 };
     
     
-export const getLiveCategories = async (req, res,next) => 
+/**
+ * Returns all live TV categories for the authenticated connection.
+ * @param {import('express').Request} req - req.connection: IptvConnection
+ * @param {import('express').Response} res - 200: { success, data: category[] }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getLiveCategories = async (req, res,next) =>
 {
    try{
         const data = await fetchXtreamData(req.connection, 'get_live_categories');
@@ -51,7 +68,6 @@ export const getLiveCategories = async (req, res,next) =>
         });
     }
     catch(error){
-        console.error('Error fetching live categories:', error.message);
         next(error);
     }
 
@@ -60,67 +76,100 @@ export const getLiveCategories = async (req, res,next) =>
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-export const getMoviesByCategories = async (req, res,next) => 
+/**
+ * Returns all movies (VOD streams) belonging to a specific category.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.categoryId: string
+ * @param {import('express').Response} res - 200: { success, data: stream[] }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getMoviesByCategories = async (req, res,next) =>
 {
    try{
         const { categoryId } = req.params;
-       const data = await fetchXtreamData(
-      req.connection,
-      'get_vod_streams',        // action ל-VOD ב-Xtream
-      { category_id: categoryId } // פרמטר נוסף
-    );
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
+        const allData = await fetchXtreamData(
+          req.connection,
+          'get_vod_streams',
+          { category_id: categoryId }
+        );
+        const total = Array.isArray(allData) ? allData.length : 0;
+        const data = Array.isArray(allData) ? allData.slice((page - 1) * limit, page * limit) : allData;
 
         res.status(200).json({
             success:true,
-            data:data
+            data,
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
         });
     }
     catch(error){
-        console.error('Error fetching live categories:', error.message);
         next(error);
     }
 
 };
-export const getSeriesByCategories = async (req, res,next) => 
+/**
+ * Returns all series belonging to a specific category.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.categoryId: string
+ * @param {import('express').Response} res - 200: { success, data: series[] }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getSeriesByCategories = async (req, res,next) =>
 {
   try{
         const { categoryId } = req.params;
-       const data = await fetchXtreamData(
-      req.connection,
-      'get_series',        // action ל-VOD ב-Xtream
-      { category_id: categoryId } // פרמטר נוסף
-    );
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
+        const allData = await fetchXtreamData(
+          req.connection,
+          'get_series',
+          { category_id: categoryId }
+        );
+        const total = Array.isArray(allData) ? allData.length : 0;
+        const data = Array.isArray(allData) ? allData.slice((page - 1) * limit, page * limit) : allData;
 
         res.status(200).json({
             success:true,
-            data:data
+            data,
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
         });
     }
     catch(error){
-        console.error('Error fetching Series By categories:', error.message);
         next(error);
     }
 
 };
 
 
-export const getLiveByCategories = async (req, res,next) => 
+/**
+ * Returns all live channels belonging to a specific category.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.categoryId: string
+ * @param {import('express').Response} res - 200: { success, data: channel[] }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getLiveByCategories = async (req, res,next) =>
 {
    try{
         const { categoryId } = req.params;
-       const data = await fetchXtreamData(
-      req.connection,
-      'get_live_streams',        // action ל-VOD ב-Xtream
-      { category_id: categoryId } // פרמטר נוסף
-    );
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
+        const allData = await fetchXtreamData(
+          req.connection,
+          'get_live_streams',
+          { category_id: categoryId }
+        );
+        const total = Array.isArray(allData) ? allData.length : 0;
+        const data = Array.isArray(allData) ? allData.slice((page - 1) * limit, page * limit) : allData;
 
         res.status(200).json({
             success:true,
-            data:data
+            data,
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
         });
     }
     catch(error){
-        console.error('Error fetching live categories:', error.message);
         next(error);
     }
 
@@ -128,7 +177,14 @@ export const getLiveByCategories = async (req, res,next) =>
 
 
 ////////////////////////////////////////////////////////////////////////////
-export const getLiveStream = async (req, res,next) => 
+/**
+ * Resolves a working live stream URL by probing supported formats for the given stream ID.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.streamId: string
+ * @param {import('express').Response} res - 200: { success, streamUrl: { success, format, url } }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getLiveStream = async (req, res,next) =>
 {
   try {
     const { streamId } = req.params;
@@ -145,17 +201,20 @@ export const getLiveStream = async (req, res,next) =>
 
 };
 
-export const getMovieStream = async (req, res,next) => 
+/**
+ * Builds and returns a direct VOD stream URL for a movie.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.streamId: string, req.query.ext: string (container format e.g. "mp4")
+ * @param {import('express').Response} res - 200: { success, streamUrl: string }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getMovieStream = async (req, res,next) =>
 {
   try {
     const {streamId} = req.params;
     const{ext}= req.query;
-    console.log('Requested container extension:');
 
     const streamUrl = buildVodStreamUrl(req.connection, streamId,"movie",ext);
-      console.log('Stream ID:', req.params);
-
-      console.log('Fetching XTREAM data from URL:', streamUrl);
 
 
     res.status(200).json({
@@ -168,12 +227,18 @@ export const getMovieStream = async (req, res,next) =>
 
 };
 
-export const getSeriesStream = async (req, res,next) => 
+/**
+ * Builds and returns a direct stream URL for a series episode.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.streamId: string, req.query.ext: string (container format e.g. "mp4")
+ * @param {import('express').Response} res - 200: { success, streamUrl: string }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getSeriesStream = async (req, res,next) =>
 {
   try {
     const { streamId } = req.params;
     const{ext}= req.query;
-    console.log(ext)
 
     const streamUrl = buildVodStreamUrl(req.connection, streamId,"series",ext);
 
@@ -187,7 +252,14 @@ export const getSeriesStream = async (req, res,next) =>
 
 };
 
-export const getMovieInfo = async (req, res,next) => 
+/**
+ * Returns full metadata for a single movie (plot, poster, cast, etc.).
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.streamId: string
+ * @param {import('express').Response} res - 200: { success, data: vodInfo }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getMovieInfo = async (req, res,next) =>
 {
   try {
     const { streamId } = req.params;
@@ -205,10 +277,17 @@ export const getMovieInfo = async (req, res,next) =>
   }   
 };
 
-export const getSeriesInfo = async (req, res,next) => 
+/**
+ * Returns full metadata for a series including all seasons and episodes.
+ * @param {import('express').Request} req - req.connection: IptvConnection, req.params.streamId: string
+ * @param {import('express').Response} res - 200: { success, data: seriesInfo }
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
+export const getSeriesInfo = async (req, res,next) =>
 {
   try {
-    const { streamId } = req.params;    
+    const { streamId } = req.params;
     const data = await fetchXtreamData(
       req.connection,
       'get_series_info',        // action ל-VOD ב-Xtream
@@ -221,6 +300,34 @@ export const getSeriesInfo = async (req, res,next) =>
   }
     catch (err) {
     next(err);
-  }   
+  }
+};
+
+/**
+ * Returns the next few upcoming shows (short EPG) for a live channel.
+ * Available to all tiers. Cached 1h (inherits fetchXtreamData default).
+ */
+export const getShortEpg = async (req, res, next) => {
+  try {
+    const { streamId } = req.params;
+    const data = await fetchXtreamData(req.connection, 'get_short_epg', { stream_id: streamId });
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Returns the full 7-day EPG for a live channel. Premium only.
+ * Cached 1h (inherits fetchXtreamData default).
+ */
+export const getFullEpg = async (req, res, next) => {
+  try {
+    const { streamId } = req.params;
+    const data = await fetchXtreamData(req.connection, 'get_epg', { stream_id: streamId });
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
 };
 

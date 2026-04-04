@@ -2,16 +2,20 @@
 import { useState } from "react";
 import { connectToServer, setAuthToken } from "../../api/client";
 
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL?.replace("/api/v1", "") || "http://localhost:5000";
+
 export default function ConnectScreen({ onConnected }) {
-
-
   const [name, setName] = useState("iptv");
   const [url, setBaseUrl] = useState("http://a10.lion.wine:80");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isOver13, setIsOver13] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const canSubmit = agreedToTerms && isOver13 && !loading;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,25 +23,32 @@ export default function ConnectScreen({ onConnected }) {
     setLoading(true);
 
     try {
-      const payload = { name,url, username, password };
+      const payload = {
+        type: "xtream",
+        name,
+        url,
+        username,
+        password,
+        agreedToTerms: true,
+        isOver13: true,
+      };
       const res = await connectToServer(payload);
-      console.log(payload);
 
-      // נניח שהבקאנד מחזיר token בשדה res.data.token
       const token = res.data.token;
-      if (!token) {
-        throw new Error("No token returned from server");
-      }
-      // שומר את הטוקן גם ב-axios וגם ב-localStorage
+      const refreshToken = res.data.refreshToken;
+      if (!token) throw new Error("No token returned from server");
+
       setAuthToken(token);
+      if (refreshToken) localStorage.setItem("xtream_refresh_token", refreshToken);
 
-      // אם יש לך גם מידע על החיבור (לדוגמה server_info / user_info),
-      // אפשר לשמור אותו ב-localStorage או ב-state גלובלי בעתיד.
-
-      onConnected(); // אומר ל-App שאנחנו מחוברים
+      onConnected();
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.error|| err.response?.data?.message || "Connection failed");
+      setError(
+        err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Connection failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -58,12 +69,13 @@ export default function ConnectScreen({ onConnected }) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
+
         <div>
           <label className="block text-sm mb-1">Base URL</label>
           <input
             type="text"
             className="w-full rounded-md bg-slate-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-red-500"
-            placeholder="http://a10.lion.wine:80"
+            placeholder="http://provider.example.com:8080"
             value={url}
             onChange={(e) => setBaseUrl(e.target.value)}
           />
@@ -89,16 +101,56 @@ export default function ConnectScreen({ onConnected }) {
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-400">
-            {error}
-          </p>
-        )}
+        {/* COPPA + Terms consent — required by App Store / COPPA */}
+        <div className="space-y-2 pt-1">
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="mt-0.5 accent-red-500"
+              checked={isOver13}
+              onChange={(e) => setIsOver13(e.target.checked)}
+            />
+            <span className="text-sm text-slate-300">
+              I confirm that I am 13 years of age or older
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="mt-0.5 accent-red-500"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+            />
+            <span className="text-sm text-slate-300">
+              I agree to the{" "}
+              <a
+                href={`${BACKEND_URL}/legal/terms`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-red-400 underline hover:text-red-300"
+              >
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a
+                href={`${BACKEND_URL}/legal/privacy`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-red-400 underline hover:text-red-300"
+              >
+                Privacy Policy
+              </a>
+            </span>
+          </label>
+        </div>
+
+        {error && <p className="text-sm text-red-400">{error}</p>}
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed rounded-md py-2 text-sm font-semibold"
+          disabled={!canSubmit}
+          className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md py-2 text-sm font-semibold"
         >
           {loading ? "Connecting..." : "Connect"}
         </button>

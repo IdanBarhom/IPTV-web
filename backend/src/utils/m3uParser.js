@@ -1,63 +1,62 @@
-// Function to parse M3U playlists
-function parseM3U(m3uContent) {
+import axios from 'axios';
+
+/**
+ * Parses a raw M3U playlist string into an array of channel objects.
+ * Extracts name, logo (tvg-logo), category (group-title), country (tvg-country), and stream URL.
+ * @param {string} m3uContent - Full M3U file content as a string.
+ * @returns {{ name: string, logo: string, category: string, country: string, url: string, id: number }[]}
+ */
+export function parseM3U(m3uContent) {
   const lines = m3uContent.split('\n');
   const channels = [];
   let currentChannel = {};
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    
-    // Channel info line
+
     if (line.startsWith('#EXTINF:')) {
-      // Extract info from line
       const match = line.match(/#EXTINF:(-?\d+)\s*(.*)?,\s*(.*)/);
       if (match) {
         const attributes = match[2] || '';
         const name = match[3] || 'Unknown Channel';
-        
-        // Extract additional attributes
+
         const logoMatch = attributes.match(/tvg-logo="([^"]*)"/);
         const groupMatch = attributes.match(/group-title="([^"]*)"/);
         const countryMatch = attributes.match(/tvg-country="([^"]*)"/);
-        
+
         currentChannel = {
-          name: name,
+          name,
           logo: logoMatch ? logoMatch[1] : '',
           category: groupMatch ? groupMatch[1] : 'General',
           country: countryMatch ? countryMatch[1] : 'Unknown'
         };
       }
-    }
-    // URL line
-    else if (line && !line.startsWith('#') && currentChannel.name) {
+    } else if (line && !line.startsWith('#') && currentChannel.name) {
       currentChannel.url = line;
-      currentChannel.id = Date.now() + Math.random(); // Temporary ID
+      currentChannel.id = Date.now() + Math.random();
       channels.push(currentChannel);
       currentChannel = {};
     }
   }
-  
+
   return channels;
 }
 
-// Function to load M3U from URL
-async function loadM3UFromURL(url) {
+/**
+ * Fetches an M3U playlist from a remote URL and parses it into channel objects.
+ * @param {string} url - The remote URL of the M3U playlist.
+ * @returns {Promise<{ success: true, channels: object[] } | { success: false, error: string }>}
+ */
+export async function loadM3UFromURL(url) {
   try {
-    // Will add actual URL fetching later
-    // For now return example
-    return {
-      success: false,
-      error: 'Loading from URL not yet implemented'
-    };
+    const response = await axios.get(url, {
+      timeout: 15000,
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      responseType: 'text',
+    });
+    const channels = parseM3U(response.data);
+    return { success: true, channels };
   } catch (error) {
-    return {
-      success: false,
-      error: error.message
-    };
+    return { success: false, error: error.message };
   }
 }
-
-module.exports = {
-  parseM3U,
-  loadM3UFromURL
-};

@@ -50,7 +50,11 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center py-8">
       <div className="w-full max-w-5xl px-4 space-y-6">
         <NavBar ref={navRef} activeTab={activeTab} setActiveTab={setActiveTab} />
-        <MainContent activeTab={activeTab} setActiveTab={setActiveTab}/>
+        <MainContent
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onDisconnected={() => setIsConnected(false)}
+        />
       </div>
     </div>
   );

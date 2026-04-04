@@ -1,15 +1,18 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import logger from '../utils/logger.js';
 
-const db =process.env.DATABASE_URI;
-
+/**
+ * Connects to MongoDB using Mongoose. Exits the process on failure.
+ * @returns {Promise<void>}
+ */
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.DATABASE_URI);
-    console.log('✅ MongoDB connected successfully');
+    logger.info('MongoDB connected successfully');
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    logger.error({ err: error }, 'MongoDB connection error');
     process.exit(1);
-    }
+  }
 };
 
 export default connectDB;

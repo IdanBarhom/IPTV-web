@@ -97,11 +97,44 @@ const iptvConnectionSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.Mixed,
         },
 
-        // // 🔹 Last time checked
-        // lastCheckedAt: {
-        // type: Date,
-        // default: Date.now,
-        // },
+        // 🔹 Refresh token (SHA-256 hash stored, never plaintext)
+        refreshToken: {
+        type: String,
+        select: false,
+        },
+
+        // 🔹 Subscription
+        subscriptionTier: {
+        type: String,
+        enum: ['free', 'premium', 'family'],
+        default: 'free',
+        },
+        subscriptionExpiresAt: {
+        type: Date,
+        default: null,
+        },
+
+        // 🔹 Admin
+        isAdmin: {
+        type: Boolean,
+        default: false,
+        },
+
+        // 🔹 Favorites
+        favorites: [{
+        type:     { type: String, enum: ['live', 'vod', 'series'], required: true },
+        streamId: { type: String, required: true },
+        title:    { type: String, default: '' },
+        addedAt:  { type: Date,   default: Date.now },
+        }],
+
+        // 🔹 Watch History
+        watchHistory: [{
+        type:      { type: String, enum: ['live', 'vod', 'series'], required: true },
+        streamId:  { type: String, required: true },
+        title:     { type: String, default: '' },
+        watchedAt: { type: Date,   default: Date.now },
+        }],
     },
     {
     timestamps: true, 

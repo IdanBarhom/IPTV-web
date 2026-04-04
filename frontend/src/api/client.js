@@ -44,7 +44,15 @@ if (savedToken && !isTokenExpired(savedToken)) {
 
 export const connectToServer = (payload) =>
   api.post("/auth/connect", payload);
-// payload = { baseUrl, username, password }
+
+export const disconnectFromServer = () =>
+  api.post("/auth/disconnect");
+
+export const deleteAccount = () =>
+  api.delete("/account");
+
+export const exportData = () =>
+  api.get("/account/export");
 
 // LIVE
 export const getLiveCategories = () =>

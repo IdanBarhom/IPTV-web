@@ -1,8 +1,14 @@
 import axios from "axios";
+import logger from "./logger.js";
 
 /**
- * Auto-detect the working URL for a LIVE IPTV stream.
- * Tries formats based on allowedOutputFormats, then tries fallback extensions.
+ * Probes multiple stream formats to find one the server actually serves (HTTP 200).
+ * Priority order for web: m3u8 → ts → rtmp → mp4 → mkv → (no ext).
+ * First intersects with connection.allowedOutputFormats, then appends fallbacks.
+ * @param {object} connection - IptvConnection document (needs serverProtocol, serverUrl, serverPort, username, password, allowedOutputFormats, rtmpPort).
+ * @param {string} streamId - The live stream ID.
+ * @param {string} [clientType="web"] - "web" or "native" (changes format priority order).
+ * @returns {Promise<{ success: true, format: string, url: string } | { success: false, message: string, tried: string[] }>}
  */
 export const resolveLiveStream = async (connection, streamId, clientType = "web") => {
   const {
@@ -34,7 +40,7 @@ export const resolveLiveStream = async (connection, streamId, clientType = "web"
     if (!formatsToTry.includes(ext)) formatsToTry.push(ext);
   });
 
-  console.log("🔍 Trying formats:", formatsToTry);
+  logger.debug({ streamId, formats: formatsToTry }, 'Probing stream formats');
 
   // Try each format until one works
   for (const format of formatsToTry) {
@@ -48,7 +54,7 @@ export const resolveLiveStream = async (connection, streamId, clientType = "web"
       url = `${httpBase}/live/${username}/${password}/${streamId}.${format}`;
     }
 
-    console.log(`⏳ Testing: ${url}`);
+    logger.debug({ streamId, format }, 'Testing stream format');
 
     try {
       // HEAD is faster but not all IPTV servers support it → so we use GET
@@ -61,7 +67,7 @@ export const resolveLiveStream = async (connection, streamId, clientType = "web"
       });
 
       if (response.status === 200) {
-        console.log(`✅ WORKING STREAM FOUND: ${url}`);
+        logger.info({ streamId, format }, 'Working stream format found');
         return { success: true, format, url };
       }
     } catch (err) {
@@ -70,6 +76,7 @@ export const resolveLiveStream = async (connection, streamId, clientType = "web"
   }
 
   // If none worked:
+  logger.warn({ streamId, tried: formatsToTry }, 'No working stream format found');
   return {
     success: false,
     message: "No working stream URL found",

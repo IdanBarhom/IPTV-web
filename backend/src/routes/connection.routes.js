@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { getConnections, getConnection } from "../controllers/iptvConnection.controller.js";
 import authorize from "../middleware/auth.middleware.js";
+import validate from "../middleware/validate.middleware.js";
+import { connectionIdSchema } from "../schemas/xTream.schema.js";
 
 const connectionRouter = Router();
 
+connectionRouter.get('/', authorize, getConnections);
 
-connectionRouter.get('/', getConnections);
-
-connectionRouter.get('/:id',authorize, getConnection);
+connectionRouter.get('/:id', authorize, validate(connectionIdSchema), getConnection);
 
 
 
